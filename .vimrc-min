@@ -1,0 +1,275 @@
+" GVim
+" GuiFont Consolas:h12
+"
+" GVim original setting works
+" set guifont=Consolas:h16:b:cDEFAULT
+set guifont=Iosevka:h16:b:cDEFAULT
+set guifont=Iosevka:h16:cDEFAULT
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Differences between Nvim and Vim                 *vim-differences*<Paste>
+syntax on
+syntax enable
+filetype plugin indent on
+set autoindent
+set autoread
+set backspace=2 " 2 same as ":set backspace=indent,eol,start"
+"set backupdir=.,$XDG_DATA_HOME/nvim/backup
+set belloff=all
+set complete=.,w,b,u,t
+set cscopeverbose
+"set directory=$XDG_DATA_HOME/nvim/swap//
+if has('nvim')
+    set display=lastline,msgsep
+endif
+set encoding=utf-8
+set fileencoding=utf-8
+set fillchars=""
+" set fsync off
+set nofsync
+set formatoptions=tcqj
+set history=10000
+set hlsearch
+set incsearch
+
+set nolangremap
+set laststatus=2
+set listchars=tab:>-,trail:-
+set nocompatible
+set nrformats=bin,hex
+set ruler
+set sessionoptions=blank,buffers,curdir,folds,help,tabpages,winsize
+set shortmess=filnxtToOF
+set showcmd
+set sidescroll=1
+set smarttab
+set tabpagemax=50
+set tags=./tags;,tags
+set ttimeoutlen=50
+set ttyfast
+"set undodir=~/.local/share/nvim/undo
+set wildmenu
+
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" nvim option
+
+if has('nvim')
+    set termguicolors
+    set shada=!,'100,<50,s10,h
+endif
+
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" config
+
+" will cause highlight Search and CursorLineNr color invaild
+" set background=dark
+
+" set autowrite
+set fileencoding=utf-8
+set termencoding=utf-8
+set ff=unix
+
+
+set ignorecase
+set smartcase
+set magic               " Use magic patterns (extended regular expression) default on
+set guioptions=         " remove scrollbars on macvim
+set noshowmode          " don't show mode as airline already does
+set foldmethod=manual   " set folds by syntax of current language
+set mouse=              " disable mouse
+set iskeyword+=-        " treat dash separated words as a word text object
+
+
+" show existing tab with 4 spaces width
+set tabstop=4
+" when indenting with '>', use 4 spaces width
+set shiftwidth=4
+" On pressing tab, insert 4 spaces
+set expandtab
+set shiftround          " Round indent to multiple of shiftwidth
+set hidden              " enable hidden unsaved buffers
+
+set visualbell
+
+set textwidth=0
+" set textwidth=999
+" set wrap
+set wrap linebreak nolist   " soft-wrap at the edge of the screen, but not break in the middle of a word
+" set list
+
+set number
+set relativenumber
+set numberwidth=4
+
+set splitbelow
+set splitright
+
+" set inccommand=split
+
+
+" set spell spelllang=en_us
+set nospell
+" [s ]s z= zg
+
+
+
+" will cause paste improper indent
+" set nopaste
+
+" will cause <C-e> <C-a> don't work
+" set paste
+
+" jump to the last position when reopening a file
+if has("autocmd")
+    au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
+                \| exe "normal! g'\"" | endif
+endif
+
+
+
+" colorscheme elflord
+" colorscheme py
+" colorscheme murphy
+colorscheme desert
+
+
+" if &diff
+"     colorscheme janah-v
+" endif
+" au FilterWritePre * if &diff | colorscheme janah-v | endif
+
+
+
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" leader maps
+let mapleader = "\<Space>"
+
+" Readline key bindings
+nnoremap <A-1> 1gt
+nnoremap <A-2> 2gt
+nnoremap <A-3> 3gt
+nnoremap <A-4> 4gt
+nnoremap <A-5> 5gt
+nnoremap <A-6> 6gt
+nnoremap <A-7> 7gt
+nnoremap <A-8> 8gt
+nnoremap <A-9> 9gt
+
+nnoremap <F2> :%s/\<<C-r><C-w>\>//gc<Left><Left><Left>
+vnoremap <F2> y :%s/<C-r>"//gc<Left><Left><Left>
+
+
+" Switch to last-active tab
+if !exists('g:lasttab')
+    let g:lasttab = 1
+endif
+nmap <Leader><tab> :exe "tabn ".g:lasttab<CR>
+au TabLeave * let g:lasttab = tabpagenr()
+
+" set pastetoggle=<Leader>p
+
+
+" Move
+inoremap <C-a> <C-o>^
+inoremap <C-e> <End>
+inoremap <M-b> <C-o>b
+inoremap <M-f> <C-o>w
+
+inoremap <C-u> <Esc>d0s
+" inoremap <C-k> <Esc>C
+
+
+" <S-CR> works in mintty but not in iTerm2
+inoremap <S-CR> <Esc>o
+inoremap <C-CR> <Esc>o
+
+" {
+" a data file
+" inoremap <S-CR> <Esc>o
+
+" inoremap <C-j> <Esc>o
+
+" cnoremap <S-Insert> <C-R>+
+" inoremap <S-Insert> <C-R>+
+" }
+
+noremap <M-Up> <Esc>dd<Up>P
+inoremap <M-Up> <Esc>dd<Up>P
+noremap <M-Down> <Esc>ddp
+inoremap <M-Down> <Esc>ddp
+
+noremap <M-S-Up> <Esc>dd<Up>P
+inoremap <M-S-Up> <Esc>dd<Up>P
+noremap <M-S-Down> <Esc>ddp
+inoremap <M-S-Down> <Esc>ddp
+
+" inoremap dd <Esc>dd
+
+" <C-/>
+" can not use noremap
+imap <C-_> <Esc>mtgcc`tja
+nmap <C-_> <Esc>mtgcc`tj
+vmap <C-_> mtgc`tj
+
+" Use set magic instead
+" nnoremap / /\v
+
+tnoremap <Esc> <C-\><C-n>
+nnoremap <silent> <leader>` :botright Ttoggle<CR><C-w>j
+nnoremap <silent> <leader>v` :vertical botright Ttoggle<CR><C-w>l
+tnoremap <silent> <leader>` <C-\><C-n> :Ttoggle<CR>
+
+
+" CWD = Change to Directory of Current file
+command CWD cd %:p:h
+command PWD cd %:p:h
+
+command Marks Denite mark
+command Files Denite file
+command Buffers Denite buffer
+command Reg Denite register
+
+command M Marks
+command F Files
+command B Buffers
+command R Reg
+command G Grep
+
+
+
+nnoremap <leader>e :NERDTreeToggle<CR>
+nnoremap <leader>d :Denite
+nnoremap <leader>F :Denite grep<CR>
+nnoremap <leader>m :Denite mark<CR>
+
+
+nnoremap <silent> <leader>tn :set invrelativenumber<CR>:set invnumber<CR>
+nnoremap <silent> <Leader>tg :GitGutterSignsToggle<CR>
+nnoremap <silent> <Leader>tl :ALEToggle<CR>
+nnoremap <silent> <Leader>ta :set invrelativenumber<CR>:set invnumber<CR>:GitGutterSignsToggle<CR>:ALEToggle<CR>
+nnoremap <silent><expr> <Leader>th (&hls && v:hlsearch ? ':nohls' : ':set hls')."\n"
+
+" nnoremap <C-p> :History<CR>
+
+
+
+" set backspace=2
+
+" http://vim.wikia.com/wiki/256_colors_in_vim
+" set t_Co=256
+
+
+
+autocmd BufWrite * set ff=unix
+" au BufWrite * :Autoformat
+
+
+
