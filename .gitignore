@@ -11,7 +11,7 @@ log
 *.pkl
 *.parquet
 *.pq
-*.zip
+# *.zip
 *.7z
 .env
 # .env_prod

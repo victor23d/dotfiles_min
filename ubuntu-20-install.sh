@@ -3,8 +3,10 @@
 set -ex
 apt update -y
 apt upgrade -y
-mkdir /t
-mkdir -p /opt/bin
+mkdir /t || true
+mkdir -p /opt/bin || true
+
+echo 'Only run in non-blocked network'
 
 apt install -y make build-essential linux-headers-`uname -r` gcc make perl
 
@@ -18,7 +20,7 @@ apt install -y iotop iftop nethogs silversearcher-ag libpq-dev zsh
 # apt install network-manager # 有需要时总比networkd好, 必须reboot解决 device is strictly unmanaged
 
 if ! command -v pip;then
-    apt install -y python3-pip --break-system-packages
+    apt install -y python3-pip
     pip install -U pip --break-system-packages
     pip install uploadserver --break-system-packages
 fi
@@ -92,6 +94,7 @@ if ! command -v pyenv &>/dev/null;then
     # 这些是python的依赖, 缺少会导致pyenv install出一些问题以及pip install报错
     apt install -y libncurses5-dev libgdbm-dev libc6-dev libssl-dev openssl libreadline-dev libsqlite3-dev xz-utils tk-dev  zlib1g-dev libbz2-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
     # apt install -y python-dev python-setuptools python-smbus
+    cd ~
 fi
 
 systemctl disable --now ssh.socket
@@ -121,8 +124,9 @@ journalctl --vacuum-time=30d
 echo '================================================================================'
 echo 'Done, run dot.sh and exit then login back...'
 
-# ======
 exit
+
+################################################################################
 
 
 if ! command -v docker &>/dev/null;then
@@ -162,6 +166,18 @@ if ! command -v cockpit &>/dev/null;then
     tar xf cockpit-docker.tar.gz -C /usr/share/cockpit
 
 fi
+
+
+if ! command -v rclone &>/dev/null;then
+    echo '--------------------install rclone--------------------'
+    curl -LO https://github.com/rclone/rclone/releases/download/v1.67.0/rclone-v1.67.0-linux-amd64.zip
+    unzip rclone-v1.67.0-linux-amd64.zip
+    chmod 700 rclone-v1.67.0-linux-amd64/rclone
+    mv rclone-v1.67.0-linux-amd64/rclone /opt/bin
+    \rm -rf rclone-v1.67.0-linux-amd64 rclone-v1.67.0-linux-amd64.zip
+fi
+
+
 
 if ! command -v go &>/dev/null;then
     echo '--------------------install go--------------------'
