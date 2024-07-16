@@ -3,8 +3,8 @@ set -ex
 
 cd ~
 
-cp dotfiles_min/.vimrc-min ~/.vimrc
-cp dotfiles_min/.zshrc-min ~/.zshrc
-cp dotfiles_min/.tmux.conf-min ~/.tmux.conf
+ln -s  $PWD/.vimrc-min ~/.vimrc
+ln -s  $PWD/.zshrc-min ~/.zshrc
+ln -s  $PWD/.tmux.conf-min ~/.tmux.conf
 
 echo "ln dotfiles complete"
