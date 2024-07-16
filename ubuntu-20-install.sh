@@ -122,7 +122,7 @@ journalctl --vacuum-size=500M
 journalctl --vacuum-time=30d
 
 echo '================================================================================'
-echo 'Done, run dot.sh or dot-min-ln.sh and exit then login back...'
+echo 'Done, run dot.sh or dot-min.sh and exit then login back...'
 
 exit
 
