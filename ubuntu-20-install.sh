@@ -225,24 +225,20 @@ reboot
 # 不一定需要, 可以直接再virtualbox界面设置, 只要有Mount Point即可
 # sudo mount -t vboxsf shared /mnt/shared
 
-# 硬盘分区格式化
+# disk partition, make filesystem
+# https://learn.microsoft.com/en-us/azure/virtual-machines/linux/attach-disk-portal
 
-parted /dev/sdX
+lsblk -o NAME,HCTL,SIZE,MOUNTPOINT | grep -i "sd"
 
-#Replace /dev/sdX with the appropriate device identifier for your raw disk. Once in parted, you can create a new partition using the mkpart command. Ensure you set the partition type to "primary". If you want to use the entire disk, you can specify 0% as the start and 100% as the end. For example:
+parted /dev/sdc --script mklabel gpt mkpart xfspart xfs 0% 100%
+mkfs.xfs /dev/sdc1
+partprobe /dev/sdc1
 
-mkpart primary 0% 100%
-print
-# check align is optimal
-align-check opt
+mkdir /datadrive
+blkid /dev/sdc1
+# get /dev/sdc1: UUID="......" TYPE="xfs" 选前一个不是后一个
+vim /etc/fstab
+#UUID=33333333-3b3b-3c3c-3d3d-3e3e3e3e3e3e   /datadrive   xfs   defaults,nofail   1   2
 
-quit
-
-#Use partprobe to inform the kernel about the partition table changes:
-sudo partprobe /dev/sdX
-
-#Create the XFS file system using mkfs.xfs, and 4k alignment
-sudo mkfs.xfs -s size=4096 /dev/sdX1
-
-
-
+mount -a
+umount -a
