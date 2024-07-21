@@ -51,6 +51,12 @@ if [[ ! -e ~/.tmux.conf.local ]];then
     cp .tmux/.tmux.conf.local .
 fi
 
+if [[ ! -e ~/.vim/autoload/plug.vim ]];then
+    echo '--------------------install vim-plug--------------------'
+    curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+fi
+
 if ! command -v nvim &>/dev/null;then
     echo '--------------------install nvim--------------------'
     curl -LO https://github.com/neovim/neovim/releases/download/v0.9.4/nvim-linux64.tar.gz
@@ -100,6 +106,7 @@ fi
 systemctl disable --now ssh.socket
 systemctl enable --now ssh.service
 
+mv -f /etc/ssh/sshd_config.d/* /t || true
 sed -i 's/#Port 22/Port 22/g' /etc/ssh/sshd_config
 sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin prohibit-password/g' /etc/ssh/sshd_config
 sed -i 's/#PasswordAuthentication.*/PasswordAuthentication no/g' /etc/ssh/sshd_config
@@ -167,21 +174,31 @@ if ! command -v cockpit &>/dev/null;then
 
 fi
 
-
 if ! command -v rclone &>/dev/null;then
     echo '--------------------install rclone--------------------'
+    mkdir rclone
     curl -LO https://github.com/rclone/rclone/releases/download/v1.67.0/rclone-v1.67.0-linux-amd64.zip
-    unzip rclone-v1.67.0-linux-amd64.zip
-    chmod 700 rclone-v1.67.0-linux-amd64/rclone
-    mv rclone-v1.67.0-linux-amd64/rclone /opt/bin
-    \rm -rf rclone-v1.67.0-linux-amd64 rclone-v1.67.0-linux-amd64.zip
+    unzip rclone-v1.67.0-linux-amd64.zip -d rclone
+    mv rclone/rclone-v1.67.0-linux-amd64/rclone /opt/bin
+    chmod 700 /opt/bin/rclone
+    \rm -rf rclone rclone-v1.67.0-linux-amd64.zip
 fi
-
-
 
 if ! command -v go &>/dev/null;then
     echo '--------------------install go--------------------'
 fi
+
+
+if ! command -v gohttpserver &>/dev/null;then
+    echo '--------------------install gohttpserver--------------------'
+    mkdir gohttpserver
+    curl -LO https://github.com/codeskyblue/gohttpserver/releases/download/1.1.4/gohttpserver_1.1.4_linux_amd64.tar.gz
+    tar xf gohttpserver_1.1.4_linux_amd64.tar.gz -C gohttpserver
+    mv gohttpserver/gohttpserver /opt/bin
+    chmod 700 /opt/bin/gohttpserver
+    \rm -rf gohttpserver gohttpserver_1.1.4_linux_amd64.tar.gz
+fi
+
 
 
 # TODO
@@ -225,20 +242,55 @@ reboot
 # 不一定需要, 可以直接再virtualbox界面设置, 只要有Mount Point即可
 # sudo mount -t vboxsf shared /mnt/shared
 
+####################
+
 # disk partition, make filesystem
 # https://learn.microsoft.com/en-us/azure/virtual-machines/linux/attach-disk-portal
 
 lsblk -o NAME,HCTL,SIZE,MOUNTPOINT | grep -i "sd"
 
-parted /dev/sdc --script mklabel gpt mkpart xfspart xfs 0% 100%
-mkfs.xfs /dev/sdc1
-partprobe /dev/sdc1
+parted /dev/sdb --script mklabel gpt mkpart xfspart xfs 0% 100%
+mkfs.xfs /dev/sdb1
+partprobe /dev/sdb1
 
 mkdir /datadrive
-blkid /dev/sdc1
-# get /dev/sdc1: UUID="......" TYPE="xfs" 选前一个不是后一个
+blkid /dev/sdb1
+# get /dev/sdb1: UUID="......" TYPE="xfs" 选前一个不是后一个
 vim /etc/fstab
 #UUID=33333333-3b3b-3c3c-3d3d-3e3e3e3e3e3e   /datadrive   xfs   defaults,nofail   1   2
 
 mount -a
 umount -a
+
+########################################
+
+#VM swap 虚拟内存
+
+# check /etc/fstab
+/swapfile swap swap sw 0 0
+
+# Turn off all running swap processes:
+swapoff -a
+
+# Resize swap
+fallocate -l 5G /swapfile
+chmod 600 /swapfile
+mkswap /swapfile
+swapon /swapfile
+
+# check swap
+free -m
+cat /proc/swaps
+
+# Add this line to /etc/fstab
+/swapfile swap swap sw 0 0
+
+########################################
+
+# 添加用户, 创建home, 不在sudo组
+useradd -m user2 -s /bin/bash
+cp -r /root/.ssh /home/user2/
+chown -R user2:user2 /home/user2
+# 一定要设置passwd 才能用ssh登录, 即使不用password auth
+passwd user2
+
