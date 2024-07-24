@@ -29,7 +29,7 @@ if ! command -v rg;then
     echo '--------------------install rg--------------------'
     curl -LO https://github.com/BurntSushi/ripgrep/releases/download/13.0.0/ripgrep_13.0.0_amd64.deb
     dpkg -i ripgrep_13.0.0_amd64.deb
-    \rm ripgrep_13.0.0_amd64.deb
+    \rm ripgrep_13.0.0_amd64.deb || true
 fi
 
 if [[ ! -e ~/.fzf ]];then
@@ -61,8 +61,8 @@ if ! command -v nvim &>/dev/null;then
     echo '--------------------install nvim--------------------'
     curl -LO https://github.com/neovim/neovim/releases/download/v0.9.4/nvim-linux64.tar.gz
     tar xf nvim-linux64.tar.gz
-    \rm -rf nvim-linux64.tar.gz
-    mv nvim-linux64 /opt/ || true
+    \rm -rf nvim-linux64.tar.gz || true
+    mv nvim-linux64 /opt/bin || true
     \rm nvim-linux64 || true
     chmod 700 /opt/nvim-linux64/bin/nvim
     ln -s /opt/nvim-linux64/bin/nvim /opt/bin
@@ -106,8 +106,8 @@ fi
 systemctl disable --now ssh.socket
 systemctl enable --now ssh.service
 
-mv -f /etc/ssh/sshd_config.d/* /t || true
-sed -i 's/#Port 22/Port 22/g' /etc/ssh/sshd_config
+\rm -f /etc/ssh/sshd_config.d/* /t || true
+sed -i 's/Port 22/Port 22/g' /etc/ssh/sshd_config
 sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin prohibit-password/g' /etc/ssh/sshd_config
 sed -i 's/#PasswordAuthentication.*/PasswordAuthentication no/g' /etc/ssh/sshd_config
 sed -i 's/PasswordAuthentication yes/PasswordAuthentication no/g' /etc/ssh/sshd_config
@@ -162,18 +162,6 @@ if ! command -v docker &>/dev/null;then
     cp ./etc/daemon.json /etc/docker/daemon.json
 fi
 
-if ! command -v cockpit &>/dev/null;then
-    echo '--------------------install cockpit--------------------'
-    . /etc/os-release
-    sudo apt install -t ${VERSION_CODENAME}-backports cockpit
-    # 9090 浏览器端口, 用户名密码就是serial console登录的用户名密码
-    # root 默认禁止登录, 配置在 /etc/pam.d/cockpit , /etc/cockpit/disallowed-users root注释掉即可登录
-    # docker plugin
-    curl -LO https://github.com/mrevjd/cockpit-docker/releases/download/v2.0.3/cockpit-docker.tar.gz
-    tar xf cockpit-docker.tar.gz -C /usr/share/cockpit
-
-fi
-
 if ! command -v rclone &>/dev/null;then
     echo '--------------------install rclone--------------------'
     mkdir rclone
@@ -181,13 +169,8 @@ if ! command -v rclone &>/dev/null;then
     unzip rclone-v1.67.0-linux-amd64.zip -d rclone
     mv rclone/rclone-v1.67.0-linux-amd64/rclone /opt/bin
     chmod 700 /opt/bin/rclone
-    \rm -rf rclone rclone-v1.67.0-linux-amd64.zip
+    \rm -rf rclone rclone-v1.67.0-linux-amd64.zip || true
 fi
-
-if ! command -v go &>/dev/null;then
-    echo '--------------------install go--------------------'
-fi
-
 
 if ! command -v gohttpserver &>/dev/null;then
     echo '--------------------install gohttpserver--------------------'
@@ -199,6 +182,20 @@ if ! command -v gohttpserver &>/dev/null;then
     \rm -rf gohttpserver gohttpserver_1.1.4_linux_amd64.tar.gz
 fi
 
+if ! command -v cockpit &>/dev/null;then
+    echo '--------------------install cockpit--------------------'
+    . /etc/os-release
+    sudo apt install -t ${VERSION_CODENAME}-backports cockpit
+    # 9090 浏览器端口, 用户名密码就是serial console登录的用户名密码
+    # root 默认禁止登录, 配置在 /etc/pam.d/cockpit , /etc/cockpit/disallowed-users root注释掉即可登录
+    # docker plugin
+    curl -LO https://github.com/mrevjd/cockpit-docker/releases/download/v2.0.3/cockpit-docker.tar.gz
+    tar xf cockpit-docker.tar.gz -C /usr/share/cockpit
+fi
+
+if ! command -v go &>/dev/null;then
+    echo '--------------------install go--------------------'
+fi
 
 
 # TODO
@@ -273,7 +270,7 @@ umount -a
 swapoff -a
 
 # Resize swap
-fallocate -l 5G /swapfile
+fallocate -l 10G /swapfile
 chmod 600 /swapfile
 mkswap /swapfile
 swapon /swapfile
