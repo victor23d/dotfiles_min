@@ -59,10 +59,10 @@ fi
 
 if ! command -v nvim &>/dev/null;then
     echo '--------------------install nvim--------------------'
-    curl -LO https://github.com/neovim/neovim/releases/download/v0.9.4/nvim-linux64.tar.gz
+    curl -LO https://github.com/neovim/neovim/releases/download/v0.10.1/nvim-linux64.tar.gz
     tar xf nvim-linux64.tar.gz
     \rm -rf nvim-linux64.tar.gz || true
-    mv nvim-linux64 /opt/bin || true
+    mv nvim-linux64 /opt/ || true
     \rm nvim-linux64 || true
     chmod 700 /opt/nvim-linux64/bin/nvim
     ln -s /opt/nvim-linux64/bin/nvim /opt/bin
