@@ -64,7 +64,7 @@ if ! command -v nvim &>/dev/null;then
     \rm -rf nvim-linux64.tar.gz || true
     mv nvim-linux64 /opt/ || true
     \rm nvim-linux64 || true
-    chmod 700 /opt/nvim-linux64/bin/nvim
+    chmod 755 /opt/nvim-linux64/bin/nvim
     ln -s /opt/nvim-linux64/bin/nvim /opt/bin
     pip install -U pynvim --break-system-packages
     # in nvim :PlugInstall
@@ -90,16 +90,14 @@ fi
 
 if ! command -v pyenv &>/dev/null;then
     echo 'install pyenv'
-    # https://github.com/pyenv/pyenv/wiki#suggested-build-environment
-    git clone https://github.com/pyenv/pyenv.git ~/.pyenv
-    cd ~/.pyenv && src/configure && make -C src && cd ~
+    curl https://pyenv.run | bash
     # pyenv install 3.10.10
     # pyenv global 3.10.10
     # pyenv rehash
 
-    # 这些是python的依赖, 缺少会导致pyenv install出一些问题以及pip install报错
-    apt install -y libncurses5-dev libgdbm-dev libc6-dev libssl-dev openssl libreadline-dev libsqlite3-dev xz-utils tk-dev  zlib1g-dev libbz2-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
-    # apt install -y python-dev python-setuptools python-smbus
+    # missing pyenv dependencies could cause python installation failure
+    apt install build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev curl git libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
+    apt install curl wget llvm make tk-dev
     cd ~
 fi
 
@@ -159,27 +157,27 @@ if ! command -v docker &>/dev/null;then
     # solve docker DNS issue in vpn
     # Failed to establish a new connection: [Errno -3] Temporary failure in name resolution')': /simple/pip/
     mkdir -p /etc/docker
-    cp ./etc/daemon.json /etc/docker/daemon.json
+    cp ./etc/daemon.json /etc/docker/daemon.json || true
 fi
 
 if ! command -v rclone &>/dev/null;then
     echo '--------------------install rclone--------------------'
-    mkdir rclone
+    mkdir tmp
     curl -LO https://github.com/rclone/rclone/releases/download/v1.67.0/rclone-v1.67.0-linux-amd64.zip
-    unzip rclone-v1.67.0-linux-amd64.zip -d rclone
-    mv rclone/rclone-v1.67.0-linux-amd64/rclone /opt/bin
-    chmod 700 /opt/bin/rclone
-    \rm -rf rclone rclone-v1.67.0-linux-amd64.zip || true
+    unzip rclone-v1.67.0-linux-amd64.zip -d tmp
+    mv tmp/rclone-v1.67.0-linux-amd64/rclone /opt/bin
+    chmod 755 /opt/bin/rclone
+    \rm -rf tmp rclone-v1.67.0-linux-amd64.zip || true
 fi
 
-if ! command -v gohttpserver &>/dev/null;then
-    echo '--------------------install gohttpserver--------------------'
-    mkdir gohttpserver
-    curl -LO https://github.com/codeskyblue/gohttpserver/releases/download/1.1.4/gohttpserver_1.1.4_linux_amd64.tar.gz
-    tar xf gohttpserver_1.1.4_linux_amd64.tar.gz -C gohttpserver
-    mv gohttpserver/gohttpserver /opt/bin
-    chmod 700 /opt/bin/gohttpserver
-    \rm -rf gohttpserver gohttpserver_1.1.4_linux_amd64.tar.gz
+if ! command -v dufs &>/dev/null;then
+    echo '--------------------install dufs--------------------'
+    mkdir tmp
+    curl -LO https://github.com/sigoden/dufs/releases/download/v0.41.0/dufs-v0.41.0-x86_64-unknown-linux-musl.tar.gz
+    tar xf dufs-v0.41.0-x86_64-unknown-linux-musl.tar.gz -C tmp
+    mv tmp/dufs /opt/bin
+    chmod 755 /opt/bin/dufs
+    \rm -rf tmp dufs-v0.41.0-x86_64-unknown-linux-musl.tar.gz || true
 fi
 
 if ! command -v cockpit &>/dev/null;then
