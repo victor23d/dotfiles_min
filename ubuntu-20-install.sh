@@ -21,7 +21,7 @@ apt install -y iotop iftop nethogs silversearcher-ag libpq-dev zsh
 
 if ! command -v pip;then
     apt install -y python3-pip
-    pip install -U pip --break-system-packages
+#    pip install -U pip --break-system-packages
     pip install uploadserver --break-system-packages
 fi
 
@@ -116,13 +116,13 @@ sed -i 's/ChallengeResponseAuthentication yes/ChallengeResponseAuthentication no
 sed -i 's/UsePAM yes/UsePAM no/g' /etc/ssh/sshd_config
 \rm -rf /etc/ssh/sshd_config.d/
 
-sed -i 's/#MaxRetentionSec=.*/MaxRetentionSec=30d/' /etc/systemd/journald.conf
-sed -i 's/#SystemMaxUse=.*/SystemMaxUse=500M/' /etc/systemd/journald.conf
-sed -i 's/#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1/g' /etc/sysctl.conf
-
 systemctl restart ssh
 systemctl restart sshd
 
+sed -i 's/#MaxRetentionSec=.*/MaxRetentionSec=30d/' /etc/systemd/journald.conf
+sed -i 's/#SystemMaxUse=.*/SystemMaxUse=500M/' /etc/systemd/journald.conf
+sed -i 's/#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1/g' /etc/sysctl.conf
+sysctl -p /etc/sysctl.conf
 journalctl --vacuum-size=500M
 journalctl --vacuum-time=30d
 
@@ -253,6 +253,7 @@ blkid /dev/sdb1
 # get /dev/sdb1: UUID="......" TYPE="xfs" 选前一个不是后一个
 vim /etc/fstab
 #UUID=33333333-3b3b-3c3c-3d3d-3e3e3e3e3e3e   /datadrive   xfs   defaults,nofail   1   2
+#/dev/sdb1 /w/quant/data   xfs   defaults,nofail   1   2
 
 mount -a
 umount -a
