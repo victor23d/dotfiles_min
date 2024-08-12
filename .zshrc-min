@@ -135,10 +135,18 @@ alias python=python3
 
 alias gpg=gpg2
 
-export VISUAL=vim
-export GIT_EDITOR=vim
-export EDITOR='vim'
-
+if command -v nvim &> /dev/null;
+then
+    alias vim=nvim
+    alias vimdiff='nvim -d'
+    export VISUAL=nvim
+    export GIT_EDITOR=nvim
+    export EDITOR='nvim'
+else
+    export VISUAL=vim
+    export GIT_EDITOR=vim
+    export EDITOR='vim'
+fi
 
 alias c='fasd_cd -d'
 alias d='docker'
