@@ -16,14 +16,12 @@ apt install -y wget curl net-tools git openssh-server vim htop tmux zip unzip pl
 echo 'install advanced tools'
 apt install -y iotop iftop nethogs silversearcher-ag libpq-dev zsh
 
+# optional
+#apt install -y postgres-client
+
 # apt install openvswitch-switch-dpdk # netplan, 这个要小心, 尽量不要装
 # apt install network-manager # 有需要时总比networkd好, 必须reboot解决 device is strictly unmanaged
 
-if ! command -v pip;then
-    apt install -y python3-pip
-#    pip install -U pip --break-system-packages
-    pip install uploadserver --break-system-packages
-fi
 
 if ! command -v rg;then
     echo '--------------------install rg--------------------'
@@ -66,7 +64,6 @@ if ! command -v nvim &>/dev/null;then
     \rm nvim-linux64 || true
     chmod 755 /opt/nvim-linux64/bin/nvim
     ln -s /opt/nvim-linux64/bin/nvim /opt/bin
-    pip install -U pynvim --break-system-packages
     # in nvim :PlugInstall
     # in nvim :UpdateRemotePlugins
 fi
@@ -94,11 +91,12 @@ if ! command -v pyenv &>/dev/null;then
     # pyenv install 3.10.10
     # pyenv global 3.10.10
     # pyenv rehash
+    # pip install uploadserver
+    # pip install pynvim
 
     # missing pyenv dependencies could cause python installation failure
     apt install build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev curl git libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
     apt install curl wget llvm make tk-dev
-    cd ~
 fi
 
 systemctl disable --now ssh.socket
@@ -125,6 +123,8 @@ sed -i 's/#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1/g' /etc/sysctl.conf
 sysctl -p /etc/sysctl.conf
 journalctl --vacuum-size=500M
 journalctl --vacuum-time=30d
+
+timedatectl set-timezone UTC
 
 echo '================================================================================'
 echo 'Done, run dot.sh or dot-min.sh and exit then login back...'
