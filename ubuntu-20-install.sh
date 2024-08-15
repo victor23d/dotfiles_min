@@ -45,7 +45,7 @@ fi
 if [[ ! -e ~/.tmux.conf.local ]];then
     cd ~
     git clone https://github.com/gpakosz/.tmux.git
-    ln -s -f .tmux/.tmux.conf
+    ln -sf -f .tmux/.tmux.conf
     cp .tmux/.tmux.conf.local .
 fi
 
@@ -63,7 +63,7 @@ if ! command -v nvim &>/dev/null;then
     mv nvim-linux64 /opt/ || true
     \rm nvim-linux64 || true
     chmod 755 /opt/nvim-linux64/bin/nvim
-    ln -s /opt/nvim-linux64/bin/nvim /opt/bin
+    ln -sf /opt/nvim-linux64/bin/nvim /opt/bin
     # in nvim :PlugInstall
     # in nvim :UpdateRemotePlugins
 fi
