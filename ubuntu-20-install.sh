@@ -95,8 +95,7 @@ if ! command -v pyenv &>/dev/null;then
     # pip install pynvim
 
     # missing pyenv dependencies could cause python installation failure
-    apt install build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev curl git libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
-    apt install curl wget llvm make tk-dev
+    apt install build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev curl git libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev # llvm
 fi
 
 systemctl disable --now ssh.socket
@@ -180,15 +179,24 @@ if ! command -v dufs &>/dev/null;then
     \rm -rf tmp dufs-v0.41.0-x86_64-unknown-linux-musl.tar.gz || true
 fi
 
-if ! command -v cockpit &>/dev/null;then
+if ! systemctl is-active --quiet cockpit;then
     echo '--------------------install cockpit--------------------'
+    echo deb http://archive.ubuntu.com/ubuntu/ noble-backports restricted main multiverse universe > /etc/apt/sources.list.d/backports.list
+    apt update && apt upgrade
     . /etc/os-release
-    sudo apt install -t ${VERSION_CODENAME}-backports cockpit
+    apt install -t ${VERSION_CODENAME}-backports cockpit
     # 9090 浏览器端口, 用户名密码就是serial console登录的用户名密码
-    # root 默认禁止登录, 配置在 /etc/pam.d/cockpit , /etc/cockpit/disallowed-users root注释掉即可登录
+    # 可以用user1登录再给admin sudo权限, 不一定要root. root 默认禁止登录, 配置在 /etc/pam.d/cockpit , /etc/cockpit/disallowed-users root注释掉即可登录
     # docker plugin
-    curl -LO https://github.com/mrevjd/cockpit-docker/releases/download/v2.0.3/cockpit-docker.tar.gz
-    tar xf cockpit-docker.tar.gz -C /usr/share/cockpit
+    # curl -LO https://github.com/mrevjd/cockpit-docker/releases/download/v2.0.3/cockpit-docker.tar.gz
+    # tar xf cockpit-docker.tar.gz -C /usr/share/cockpit
+
+    # monitor disk health, temperature
+    if ! command -v smartctl &>/dev/null;then
+        echo '--------------------install smartctl--------------------'
+        apt install gsmartcontrol
+        smartctl -A /dev/nvme0
+    fi
 fi
 
 if ! command -v go &>/dev/null;then
