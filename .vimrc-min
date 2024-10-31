@@ -18,7 +18,7 @@ set backspace=2 " 2 same as ":set backspace=indent,eol,start"
 "set backupdir=.,$XDG_DATA_HOME/nvim/backup
 set belloff=all
 set complete=.,w,b,u,t
-set cscopeverbose
+"set cscopeverbose
 "set directory=$XDG_DATA_HOME/nvim/swap//
 if has('nvim')
     set display=lastline,msgsep
@@ -134,8 +134,8 @@ endif
 
 " colorscheme elflord
 " colorscheme py
-" colorscheme murphy
-colorscheme desert
+" colorscheme desert
+colorscheme murphy
 
 
 " if &diff

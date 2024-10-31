@@ -8,13 +8,15 @@ mkdir -p /opt/bin || true
 
 echo 'Only run in non-blocked network'
 
-apt install -y make build-essential linux-headers-`uname -r` gcc make perl
+apt install -y build-essential linux-headers-`uname -r` gcc make perl
 
 echo 'install basic tools'
-apt install -y wget curl net-tools git openssh-server vim htop tmux zip unzip plocate
+apt install -y wget curl net-tools git openssh-server neovim htop tmux zip unzip plocate xfsprogs
 
 echo 'install advanced tools'
 apt install -y iotop iftop nethogs silversearcher-ag libpq-dev zsh
+# nethogs Error calling getpwuid(3) for uid : 2 No such file or directory
+# 改 /etc/netplan 重置默认配置, 只有 01-network-manager-all.yaml, nmtui Ethernet网卡只有默认的名字,不要改
 
 # optional
 #apt install -y postgres-client
@@ -55,18 +57,20 @@ if [[ ! -e ~/.vim/autoload/plug.vim ]];then
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 fi
 
-if ! command -v nvim &>/dev/null;then
-    echo '--------------------install nvim--------------------'
-    curl -LO https://github.com/neovim/neovim/releases/download/v0.10.1/nvim-linux64.tar.gz
-    tar xf nvim-linux64.tar.gz
-    \rm -rf nvim-linux64.tar.gz || true
-    mv nvim-linux64 /opt/ || true
-    \rm nvim-linux64 || true
-    chmod 755 /opt/nvim-linux64/bin/nvim
-    ln -sf /opt/nvim-linux64/bin/nvim /opt/bin
+#if ! command -v nvim &>/dev/null;then
+#    echo '--------------------install nvim--------------------'
+#    apt remove -y vim-tiny vim-common
+#    apt install -y neovim
+#    curl -LO https://github.com/neovim/neovim/releases/download/v0.10.1/nvim-linux64.tar.gz
+#    tar xf nvim-linux64.tar.gz
+#    \rm -rf nvim-linux64.tar.gz || true
+#    mv nvim-linux64 /opt/ || true
+#    \rm nvim-linux64 || true
+#    chmod 755 /opt/nvim-linux64/bin/nvim
+#    ln -sf /opt/nvim-linux64/bin/nvim /opt/bin
     # in nvim :PlugInstall
     # in nvim :UpdateRemotePlugins
-fi
+#fi
 
 # zsh-completions outdated do not use
 # if [[ ! -e ~/.oh-my-zsh/custom/plugins/zsh-completions ]];then
@@ -94,14 +98,14 @@ if ! command -v pyenv &>/dev/null;then
     # pip install uploadserver
     # pip install pynvim
 
-    # missing pyenv dependencies could cause python installation failure
-    apt install build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev curl git libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev # llvm
+    # missing pyenv dependencies could cause python installation failure, except ubuntu 24.10+
+    # apt install build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev curl git libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev # llvm
 fi
 
 systemctl disable --now ssh.socket
 systemctl enable --now ssh.service
 
-\rm -f /etc/ssh/sshd_config.d/* /t || true
+\rm -f /etc/ssh/sshd_config.d/*
 sed -i 's/Port 22/Port 22/g' /etc/ssh/sshd_config
 sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin prohibit-password/g' /etc/ssh/sshd_config
 sed -i 's/#PasswordAuthentication.*/PasswordAuthentication no/g' /etc/ssh/sshd_config
@@ -111,7 +115,6 @@ sed -i 's/KbdInteractiveAuthentication yes/KbdInteractiveAuthentication no/g' /e
 sed -i 's/#ChallengeResponseAuthentication.*/ChallengeResponseAuthentication no/g' /etc/ssh/sshd_config
 sed -i 's/ChallengeResponseAuthentication yes/ChallengeResponseAuthentication no/g' /etc/ssh/sshd_config
 sed -i 's/UsePAM yes/UsePAM no/g' /etc/ssh/sshd_config
-\rm -rf /etc/ssh/sshd_config.d/
 
 systemctl restart ssh
 systemctl restart sshd
@@ -263,7 +266,9 @@ vim /etc/fstab
 #UUID=33333333-3b3b-3c3c-3d3d-3e3e3e3e3e3e   /datadrive   xfs   defaults,nofail   1   2
 #/dev/sdb1 /w/quant/data   xfs   defaults,nofail   1   2
 
+systemctl daemon-reload
 mount -a
+
 umount -a
 
 ########################################
