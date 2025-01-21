@@ -9,4 +9,7 @@ cp .vimrc-min ~/.vimrc
 cp .zshrc-min ~/.zshrc
 cp .tmux.conf-min ~/.tmux.conf
 
+mkdir -p ~/.config/nvim
+ln -sf ~/.vimrc ~/.config/nvim/init.vim
+
 echo "dot-min.sh complete"
