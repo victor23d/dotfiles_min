@@ -17,6 +17,7 @@ echo 'install advanced tools'
 apt install -y iotop iftop nethogs silversearcher-ag libpq-dev zsh
 # nethogs Error calling getpwuid(3) for uid : 2 No such file or directory
 # 改 /etc/netplan 重置默认配置, 只有 01-network-manager-all.yaml, nmtui Ethernet网卡只有默认的名字,不要改
+# 与docker或有关系，启动grafana浏览器开着,开nethogs浏览器访问grafana会闪退nethogs, 但先开nethogs再开浏览器访问grafana就没问题
 
 # optional
 #apt install -y postgres-client
