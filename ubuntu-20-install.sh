@@ -11,7 +11,7 @@ echo 'Only run in non-blocked network'
 apt install -y build-essential linux-headers-`uname -r` gcc make perl
 
 echo 'install basic tools'
-apt install -y wget curl net-tools git openssh-server neovim htop tmux zip unzip plocate xfsprogs
+apt install -y wget curl net-tools network-manager git openssh-server neovim htop tmux zip unzip plocate xfsprogs
 
 echo 'install advanced tools'
 apt install -y iotop iftop nethogs silversearcher-ag libpq-dev zsh
@@ -101,6 +101,9 @@ if ! command -v pyenv &>/dev/null;then
 
     # missing pyenv dependencies could cause python installation failure, except ubuntu 24.10+
     # apt install build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev curl git libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev # llvm
+    # wsl fix locale issue
+    # dpkg-reconfigure locales
+
 fi
 
 systemctl disable --now ssh.socket
@@ -128,6 +131,8 @@ journalctl --vacuum-size=500M
 journalctl --vacuum-time=30d
 
 timedatectl set-timezone UTC
+
+./enable_root_gdm.sh
 
 echo '================================================================================'
 echo 'Done, run dot.sh or dot-min.sh and exit then login back...'
@@ -227,7 +232,7 @@ apt autoremove --purge snapd
 # not automatically install snapd as an update.
 apt-mark hold snapd
 \rm -rf /var/cache/snapd/
-\rm -rm ~/snap
+\rm -rf ~/snap
 
 
 # VirtualBox虚拟机，直接配置完成后，不要安装任何多余的软件, 因为ubuntu会用snap, snap之后要卸载掉
@@ -256,8 +261,9 @@ reboot
 
 lsblk -o NAME,HCTL,SIZE,MOUNTPOINT | grep -i "sd"
 
-parted /dev/sdb --script mklabel gpt mkpart xfspart xfs 0% 100%
-mkfs.xfs /dev/sdb1
+parted /dev/sdb --script mklabel gpt mkpart primary xfs 1MB 98%
+parted /dev/sdb align-check optimal 1
+mkfs.xfs /dev/sdb1 # apt install xfsprogs
 partprobe /dev/sdb1
 
 mkdir /datadrive
