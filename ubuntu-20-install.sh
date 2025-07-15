@@ -303,6 +303,30 @@ cat /proc/swaps
 
 ########################################
 
+# resize disk
+
+can grow root partition directly
+
+# use growpart
+growpart /dev/sda
+
+# use parted
+parted /dev/sda 1
+resizepart 1 100%
+print
+quit
+
+#xfs
+xfs_growfs /dev/sda1
+# ext4
+resize2fs /dev/sda1
+
+# finally check
+df -h
+
+
+########################################
+
 # 添加用户, 创建home, 不在sudo组
 useradd -m user2 -s /bin/bash
 cp -r /root/.ssh /home/user2/

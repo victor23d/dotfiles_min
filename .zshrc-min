@@ -121,11 +121,11 @@ PATH=$PYENV_ROOT/bin:$PATH
 export PATH
 
 
-alias rm='echo "============================================================"'
-
+alias rm='echo "rm is blocked, use trash_clean"'
 alias ls='ls -ACGhX --file-type --time-style=iso --color=tty --group-directories-first'
 alias sl=ls
 alias ks=ls
+
 alias mosh='mosh --ssh=ssh -p 22'
 alias h=hostname
 alias python=python3
@@ -157,6 +157,47 @@ alias ag='ag -i --hidden' #case-insensitive including .dir
 alias iotop='iotop -Pao'
 alias iftop='iftop -P'
 alias nethogs='nethogs -sC'
+
+########################################
+
+function find() {
+    if [[ "$*" =~ ^[[:space:]]*\.[[:space:]]+-delete([[:space:]]|$) ]]; then
+        echo "Error: 'find . -delete' is blocked. use trash_clean"
+        return 1
+    fi
+    command find "$@"
+}
+
+
+export TRASH_DIR="/t"
+
+trash_clean() {
+  # Ensure current directory is exactly /t
+  if [[ "$(pwd -P)" != "$TRASH_DIR" ]]; then
+    echo "🚫 Refused: You must 'cd $TRASH_DIR' before running trash_clean."
+    echo "Current directory: $(pwd -P)"
+    return 1
+  fi
+
+  if [[ ! -d $TRASH_DIR ]]; then
+    echo "❗ Trash folder '$TRASH_DIR' does not exist."
+    return 1
+  fi
+
+  read "?Empty trash ($TRASH_DIR)? This will permanently delete everything. [y/N] " ans
+  if [[ $ans == [Yy]* ]]; then
+    read "?Type 'delete' to confirm permanent deletion: " confirm
+    if [[ $confirm == "delete" ]]; then
+      find "$TRASH_DIR" -mindepth 1 -delete
+      echo "🗑️ Trash emptied."
+    else
+      echo "🚫 Aborted. Confirmation failed."
+    fi
+  else
+    echo "🚫 Aborted."
+  fi
+}
+
 
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
