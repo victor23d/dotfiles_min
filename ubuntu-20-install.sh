@@ -99,8 +99,10 @@ if ! command -v pyenv &>/dev/null;then
     # pip install uploadserver
     # pip install pynvim
 
-    # missing pyenv dependencies could cause python installation failure, except ubuntu 24.10+
-    # apt install build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev curl git libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev # llvm
+    # missing pyenv dependencies could cause python installation failure
+    # apt install aptitude build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev curl git libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev # llvm
+    # if still not work, use pyenv install -v , check the log exactly, found ModuleNotFoundError: No module named 'zlib' # #During handling of the above exception, another exception occurred: ... then fix the missing module by apt install, usually by downgrading some package version, then install dependencies again
+    # downgrading with GPT help with log: apt install libbz2-1.0=1.0.8-5.1 libbz2-dev=1.0.8-5.1 zlib1g=1:1.3.dfsg-3.1ubuntu2 zlib1g-dev=1:1.3.dfsg-3.1ubuntu2
     # wsl fix locale issue
     # dpkg-reconfigure locales
 
@@ -283,23 +285,23 @@ umount -a
 #VM swap 虚拟内存
 
 # check /etc/fstab
-/swapfile swap swap sw 0 0
+/swap.img swap swap sw 0 0
 
 # Turn off all running swap processes:
 swapoff -a
 
 # Resize swap
-fallocate -l 10G /swapfile
-chmod 600 /swapfile
-mkswap /swapfile
-swapon /swapfile
+fallocate -l 1G /swap.img
+chmod 600 /swap.img
+mkswap /swap.img
+swapon /swap.img
 
 # check swap
 free -m
 cat /proc/swaps
 
 # Add this line to /etc/fstab
-/swapfile swap swap sw 0 0
+/swap.img swap swap sw 0 0
 
 ########################################
 
