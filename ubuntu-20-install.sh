@@ -33,6 +33,11 @@ if ! command -v rg;then
     \rm ripgrep_13.0.0_amd64.deb || true
 fi
 
+if ! command -v fd;then
+    echo '--------------------install fd--------------------'
+    apt install fd-find
+fi
+
 if [[ ! -e ~/.fzf ]];then
     echo '--------------------install fzf--------------------'
     git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
