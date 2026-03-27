@@ -218,5 +218,3 @@ _auto_venv() { local d=$PWD; while [[ -n $d ]]; do [[ -d $d/.venv/bin ]] && { PA
 chpwd_functions+=(_auto_venv)
 _auto_venv
 
-fi
-
