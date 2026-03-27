@@ -213,6 +213,7 @@ if type pyenv &>/dev/null;then
 
 
 # auto-activate .venv if present (takes priority over pyenv shims)
+PATH=~/.local/bin:$PATH
 _auto_venv() { local d=$PWD; while [[ -n $d ]]; do [[ -d $d/.venv/bin ]] && { PATH="$d/.venv/bin:$PATH"; return }; d=${d%/*}; done }
 chpwd_functions+=(_auto_venv)
 _auto_venv
