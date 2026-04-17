@@ -33,6 +33,11 @@ if ! command -v rg;then
     \rm ripgrep_13.0.0_amd64.deb || true
 fi
 
+if ! command -v ctags;then
+    echo '--------------------install rg--------------------'
+    apt-get install -y universal-ctags
+fi
+
 if ! command -v fd;then
     echo '--------------------install fd--------------------'
     apt install fd-find

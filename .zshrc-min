@@ -87,8 +87,6 @@ export LANG=en_US.UTF-8
 # remote sessions setting
 if [[ -n $SSH_CONNECTION ]]; then
     w
-fi
-
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
 
@@ -108,14 +106,12 @@ fi
 export GOPATH=~/go
 export LC_ALL="en_US.UTF-8"
 export LANG="en_US.UTF-8"
-export PYENV_ROOT="$HOME/.pyenv"
 PATH=$PATH:~/.local/bin:/usr/local/bin:/usr/local/bin/shell
 PATH=$PATH:/opt:/opt/shell:/opt/bin
 PATH=$PATH:/usr/local/go/bin
 PATH=$PATH:$GOPATH/bin:~/go/bin
 PATH=$PATH:/snap/bin
 PATH=$PATH:/opt/node/bin
-PATH=$PYENV_ROOT/bin:$PATH
 # PATH=$PATH:~/.local/share:/usr/local/share:
 # PATH=$PATH:~/.krew/bin
 export PATH
@@ -144,8 +140,6 @@ else
     export VISUAL=vim
     export GIT_EDITOR=vim
     export EDITOR='vim'
-fi
-
 alias c='fasd_cd -d'
 alias d='docker'
 alias dl='docker logs -f'
@@ -212,9 +206,4 @@ if type pyenv &>/dev/null;then
     eval "$(pyenv init -)"
 fi
 
-# auto-activate .venv if present (takes priority over pyenv shims)
-PATH=~/.local/bin:$PATH
-_auto_venv() { local d=$PWD; while [[ -n $d ]]; do [[ -d $d/.venv/bin ]] && { PATH="$d/.venv/bin:$PATH"; return }; d=${d%/*}; done }
-chpwd_functions+=(_auto_venv)
-_auto_venv
-
+. "$HOME/.local/bin/env"
