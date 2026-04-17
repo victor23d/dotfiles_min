@@ -198,12 +198,5 @@ trash_clean() {
 export FZF_DEFAULT_OPTS='--height 40% --reverse'
 
 
-export PYENV_ROOT="$HOME/.pyenv"
-PATH=$PYENV_ROOT/bin:$PATH
-# eval should after PATH
-if type pyenv &>/dev/null;then
-    eval "$(pyenv init --path)"
-    eval "$(pyenv init -)"
-fi
 
 . "$HOME/.local/bin/env"
