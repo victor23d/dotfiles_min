@@ -87,6 +87,7 @@ export LANG=en_US.UTF-8
 # remote sessions setting
 if [[ -n $SSH_CONNECTION ]]; then
     w
+fi
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
 
@@ -140,6 +141,7 @@ else
     export VISUAL=vim
     export GIT_EDITOR=vim
     export EDITOR='vim'
+fi
 alias c='fasd_cd -d'
 alias d='docker'
 alias dl='docker logs -f'
